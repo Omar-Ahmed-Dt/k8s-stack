@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: http-01-production
+spec:
+  acme:
+    email: omarahmed9113@gmail.com  # Your email for Let's Encrypt notifications
+    server: https://acme-v02.api.letsencrypt.org/directory  # Production server for Let's Encrypt
+    privateKeySecretRef:
+      name: http-01-production-cluster-issuer  # Secret to store the Let's Encrypt account key
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: nginx  # Ensure the ingress class is nginx

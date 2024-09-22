@@ -1,0 +1,26 @@
+# Ingress for Second App (deploy.heradev.website)
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress-1
+  namespace: default  # Adjust namespace if needed
+  annotations:
+    cert-manager.io/cluster-issuer: http-01-production
+spec:
+  ingressClassName: nginx   # the same name of ingressclass
+  rules:
+  - host: deploy.heradev.website  # Use 'deploy.heradev.website' for the second app
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: solar-system-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - deploy.heradev.website  # Use 'deploy.heradev.website' for the second app
+    secretName: app-devopsbyexample-com
