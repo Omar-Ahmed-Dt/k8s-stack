@@ -7,8 +7,9 @@ This guide provides step-by-step instructions to create a GKE cluster and instal
 
 - Google Cloud SDK (`gcloud`)
 - Kubernetes CLI (`kubectl`)
-- Helm installed locally
+- Helm installed
 - A Google Cloud Project with Kubernetes Engine API enabled
+- Any Domain (godaddy) 
 
 ## Step 1: Create GKE Cluster
 
