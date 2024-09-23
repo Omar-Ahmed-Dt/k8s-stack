@@ -62,7 +62,9 @@ helm repo add external-secrets https://charts.external-secrets.io
 helm repo update
 
 # Install the External Secrets Operator into its own namespace
-helm install external-secrets external-secrets/external-secrets --namespace external-secrets --create-namespace
+helm install external-secrets external-secrets/external-secrets \
+    --namespace external-secrets \
+    --set watchNamespaces="{default}"
 ```
 
 ## Step 5: Verify the Installations
@@ -88,14 +90,15 @@ Ensure the ESO pods are up and running:
 ```bash
 kubectl get pods --namespace external-secrets
 ```
+---
 
-### Create Zone, A-record For Ingress-nginx Service and Change Nameservers: 
+## Playing With CertManager: 
+**Create Zone, A-record For Ingress-nginx Service and Change Nameservers:** 
 ![dns1](./imgs/dns1.png)
 ![dns2](./imgs/dns2.png)
 ![dns3](./imgs/dns3.png)
 ![nameserver](./imgs/ns.png)
 ![mydns](./imgs/mydns.png)
-
 
 ### Deploy Website With TLS Using HTTP-01 Chanllenge:
 ```
@@ -110,3 +113,51 @@ kubectl apply -f service.yml
 ![rs](./imgs/rs.png)
 ![website](./imgs/web.png) 
 ![ssl](./imgs/crt.png) 
+
+## Playing With ESO:
+**Create a Service Account, Assign Roles to It, and Create a Secret in Secret Manager:**
+```
+gcloud iam service-accounts create svc-team-a \
+    --description="Service account for team-a" \
+    --display-name="svc-team-a" \
+    --project=nice-hydra-435514-e8
+```
+```
+gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
+    --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
+    --role="roles/secretmanager.viewer"
+```
+```
+gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
+    --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
+    --role="roles/secretmanager.secretAccessor"
+```
+```
+gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
+    --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
+    --role="roles/iam.serviceAccountTokenCreator"
+```
+```
+gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
+    --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
+    --role="roles/iam.workloadIdentityUser"
+```
+**Validate :** 
+- From the left menu, select IAM & Admin > Service Accounts 
+-  find and click on the service account you want to manage (esvc-team-a)
+- Go to the Permissions Tab, click on the Permissions tab to view and manage access.
+
+**Create Secret :**
+- Navigate to Secret Manager:
+- Create a Secret, Enter a Name for the secret and add the value you want to store.
+
+![sctvalue](./imgs/sctvalue.png)
+
+**Deploy Service Account , Secret Store and External Secret :**
+```
+kubectl apply -f service_account.yml
+kubectl apply -f secretstore.yml
+kubectl apply -f externalsecret.yml
+```
+
+![validateeso](./imgs/validateeso.png)
