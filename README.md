@@ -101,7 +101,7 @@ kubectl get pods --namespace external-secrets
 ![mydns](./imgs/mydns.png)
 
 ### Deploy Website With TLS Using HTTP-01 Chanllenge:
-```
+```bash
 kubectl apply -f cluster-issuer.yaml
 kubectl apply -f ingress.yaml
 kubectl apply -f deployment.yml
@@ -116,35 +116,35 @@ kubectl apply -f service.yml
 
 ## Playing With ESO:
 **Create a Service Account, Assign Roles to It, and Create a Secret in Secret Manager:**
-```
+```bash
 gcloud iam service-accounts create svc-team-a \
     --description="Service account for team-a" \
     --display-name="svc-team-a" \
     --project=nice-hydra-435514-e8
 ```
-```
+```bash
 gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
     --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
     --role="roles/secretmanager.viewer"
 ```
-```
+```bash
 gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
     --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
     --role="roles/secretmanager.secretAccessor"
 ```
-```
+```bash
 gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
     --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
     --role="roles/iam.serviceAccountTokenCreator"
 ```
-```
+```bash
 gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
     --member="serviceAccount:svc-team-a@nice-hydra-435514-e8.iam.gserviceaccount.com" \
     --role="roles/iam.workloadIdentityUser"
 ```
 **Validate :** 
 - From the left menu, select IAM & Admin > Service Accounts 
--  find and click on the service account you want to manage (esvc-team-a)
+-  find and click on the service account you want to manage (svc-team-a)
 - Go to the Permissions Tab, click on the Permissions tab to view and manage access.
 
 **Create Secret :**
@@ -154,7 +154,7 @@ gcloud projects add-iam-policy-binding nice-hydra-435514-e8 \
 ![sctvalue](./imgs/sctvalue.png)
 
 **Deploy Service Account , Secret Store and External Secret :**
-```
+```bash
 kubectl apply -f service_account.yml
 kubectl apply -f secretstore.yml
 kubectl apply -f externalsecret.yml
